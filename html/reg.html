@@ -1,0 +1,155 @@
+<?php
+require_once'core/init.php';
+require_once'fun.php';
+
+if (empty($_POST)===false) {
+  $require_fields = array('first_name','password','re_password','email','gen');
+
+  foreach ($_POST as $key => $value) {
+      if (empty($value)&&in_array($key, $require_fields)=== true) {
+        $errors[]= "all fields are required";
+        break 1;
+      }
+    if (empty($errors)===true) {
+      if (emailexits($_POST['email'])===true) {
+        $errors[]= 'this email already registed';
+      }
+      if ($_POST['password']!==$_POST['re_password']) {
+        $errors[]= 'Your passwords are not match';
+
+      }
+      if (filter_var($_POST['email'],FILTER_VALIDATE_EMAIL)===false) {
+        $errors[]= 'A valid email address required';
+      }
+      if ($_POST['gen']=== 0) {
+        $errors[]='please select gender';
+      }
+    }
+
+  }
+}
+
+
+?>
+ <h1>Register..........!</h1>
+<?php
+if (empty($_POST)===false && empty($errors)===true) {
+  $time = time();
+  $register_data = array(
+    'first_name'  => $_POST['first_name'],
+    'last_name'   => $_POST['last_name'],
+    'password'    => $_POST['re_password'],
+    'email'     =>$_POST['email'],
+    'gender'    =>$_POST['gen'],
+    'created'   =>$time   
+    );
+  $register_data = array_map('mysql_real_escape_string', $register_data);
+  // print_r($register_data);
+  // die();
+  regiter_user($register_data);
+  //redirect
+  //exit
+  header('Location: index.php');
+}elseif (empty($errors)===false){
+  echo output_errors($errors);
+}
+
+ ?>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Share your Travel- Register</title>
+
+    <!-- Bootstrap -->
+    <link href="dist/css/bootstrap.css" rel="stylesheet">
+    <link href="dist/css/bootstrap-theme.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="css/app.css">
+    <link href="dist/js/bootstrap.min.js" rel="stylesheet"> 
+    <link href="dist/js/jquery.js" rel="stylesheet"> 
+
+  </head>
+  <body>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Share your Travel</a>
+          </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form class="navbar-form navbar-right" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+              </div>
+              <button type="submit" class="btn btn-default">Submit</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="About.html">About</a></li>
+              <li><a href="login.php">Login</a></li>
+              <li><a href="reg.php">Register</a></li>
+              <li><a href="Contact.html">Contact Us</a></li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+ 
+    <div class="container"><h1>Hello!....</h1>   
+         <!-- Side by side
+         <form class="form-inline">
+          <div class="form-group">
+              <label for="exampleInputName2">First Name</label>
+              <input type="text" class="form-control" id="exampleInputName2" placeholder="First Name"> 
+
+              <label for="exampleInputName3">Last Name</label>
+              <input type="text" class="form-control" id="exampleInputName2" placeholder="Last Name">
+          </div>          
+      </form> -->
+
+
+      <form method="post">
+        <div  class="form-group">
+          <label for="first_name" name="first_name">First Name</label>
+          <input type="text" class="form-control" placeholder="First name">
+          <label for="last_name" name="last_name">Last Name</label>
+          <input type="text" class="form-control" placeholder="Last Name">
+
+          <label for="exampleInputEmail1" name="email">Email address</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1" name="password">Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          <label for="exampleInputPassword2" name="re_password">Re-enter Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Re-enter Password">
+        </div>
+
+        
+<!-- <div class="btn-group">
+  <button data-toggle="dropdown" class="btn btn-default dropdown-toggle">Gender <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><input type="radio" id="ID" name="NAME" value="VALUE"><label for="ID">Male</label></li>
+      <li><input type="radio" id="ID" name="NAME" value="VALUE"><label for="ID">Female</label></li>
+      <li><input type="radio" id="ID" name="NAME" value="VALUE"><label for="ID">Others</label></li>
+    </ul>
+</div> -->
+   
+        <div class="form-group">
+          <label for="exampleInputFile">Upload your Document</label>
+          <input type="file" id="exampleInputFile">
+        </div>
+        <button type="button" class="btn btn-success"  value="subbmit">Register</button>
+            <p class="bg-success">Thank you for using!....</p>
+      </form>     
+    </div>
+ 
+</body>
+</html>
